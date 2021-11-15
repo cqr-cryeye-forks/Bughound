@@ -1,1 +1,1 @@
-from arguments import arguments
+from .arguments import arguments
