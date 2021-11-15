@@ -1,10 +1,11 @@
 #!/usr/bin/python3
 
 import re
+import time
 from hashlib import sha512
 
-from core.functions import *
-from core.shipper import *
+from core.functions import get_regex, get_language_data, read_file_lines, print_success
+from core.shipper import ship_entry
 
 php_final_findings = []
 previous_findings = []
@@ -88,6 +89,7 @@ class Parser:
         metadata[self.project_name]["category"] = category
         metadata[self.project_name]["function"] = function
         if line_number > 3:
+            line_number -= 1
             code_snippet = lines[line_number - 3]
             code_snippet += lines[line_number - 2]
             code_snippet += lines[line_number - 1]
