@@ -6,7 +6,7 @@ import json
 import time
 from core.shipper import *
 from termcolor import cprint
-
+from config import data_file
 
 def print_error(text):
     message = "[-] {0}".format(text)
@@ -52,14 +52,14 @@ def read_file_lines(file_path):
 
 
 def get_regex(language):
-    fi = open("data/data.json", "r")
+    fi = open(data_file, "r")
     data = fi.read()
     json_data = dict(json.loads(data))
     return json_data[language]["regex"]
 
 
 def get_language_data(language):
-    fi = open("data/data.json", "r")
+    fi = open(data_file, "r")
     data = fi.read()
     json_data = dict(json.loads(data))
     return json_data[language]["category"]
@@ -73,7 +73,7 @@ def check_extension(extension):
 
 
 def check_language(language):
-    fi = open("data/data.json", "r")
+    fi = open(data_file, "r")
     data = fi.read()
     json_data = dict(json.loads(data))
     languages = json_data.keys()
