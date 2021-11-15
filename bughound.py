@@ -1,27 +1,16 @@
 #!/usr/bin/python
 
-import argparse
 import time
-import sys
-from core.config import *
-from core.parser import *
-from core.functions import *
-from core.shipper import *
 
+from core import arguments
+from core.functions import print_banner, print_help_message, check_language, print_error, check_extension, \
+    print_success, check_project, get_files, print_url, clone_repo
+from core.parser import Parser
+from core.shipper import verify_connection, check_index, create_index, create_index_pattern, fix_disk_read_only, \
+    get_total_findings
 
-banner()
-help()
-
-argparser = argparse.ArgumentParser()
-argparser.add_argument("--path", help="local path of the source code")
-argparser.add_argument("--git", help="git repository URL")
-#argparser.add_argument("--init", help="initialize Elastic and Kibanna requirements", action="store_true")
-argparser.add_argument("--language", help="the used programming language", required=True)
-argparser.add_argument("--extension", help="extension to search for", required=True)
-argparser.add_argument("--name", help="project name to use", required=True)
-argparser.add_argument("--verbose", help="show debugging messages", default=False, required=False, const=True, nargs='?')
-
-arguments = argparser.parse_args()
+print_banner()
+print_help_message()
 
 
 local_path = arguments.path
@@ -33,11 +22,11 @@ verbose = arguments.verbose
 
 start_time = time.time()
 
-if check_language(language) == False:
+if not check_language(language):
     print_error("Language %s not supported!" % language)
     exit()
 
-if check_extension(extension) == False:
+if not check_extension(extension):
     print_error("Extension should start with .")
     print_error("Example : .java, .php")
     exit()
@@ -45,47 +34,41 @@ if check_extension(extension) == False:
 # Check connection to Elastic
 if verify_connection():
     # Check if index existed
-    if check_index() == False:
+    if not check_index():
         create_index()
         create_index_pattern()
         print_success("Setup ELK stack configuration for you ..")
-        #import_dashboards()
+        # import_dashboards()
     else:
         # Check if the project name is already used
         if check_project(project_name):
-                    print_error("Project name %s already used" % project_name)
-                    print_error("Please change it")
-                    exit()
+            print_error("Project name %s already used" % project_name)
+            print_error("Please change it")
+            exit()
 
         fix_disk_read_only()
         print_success("ELK is already configured!")
-
-
-
 else:
     print_error("please check connection to Elasticsearch")
     exit()
 
-
 if git_repo is None and local_path:
     files = get_files(local_path, extension)
     for file in files:
-        p = parser(file, project_name, language)
-        file_metadata = p.calculate_metdata()
+        p = Parser(file, project_name, language)
+        file_metadata = p.calculate_meta_data()
         findings = p.get_functions(verbose)
 
     total_findings_to_print = get_total_findings()
     print_url(project_name, start_time, total_findings_to_print)
-
-
 
 if local_path is None and git_repo:
     # Use git repo
     clone_repo(git_repo, project_name)
     files = get_files("projects/%s" % project_name, extension)
     for file in files:
-        p = parser(file, project_name, language)
-        file_metadata = p.calculate_metdata()
+        p = Parser(file, project_name, language)
+        file_metadata = p.calculate_meta_data()
         functions = p.get_functions(verbose)
 
     total_findings_to_print = get_total_findings()

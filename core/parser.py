@@ -1,24 +1,23 @@
 #!/usr/bin/python3
 
-import time
-import sys
 import re
+from hashlib import sha512
+
 from core.functions import *
 from core.shipper import *
-from hashlib import sha512
+
 php_final_findings = []
 previous_findings = []
 
 
-class parser:
+class Parser:
     def __init__(self, file, project_name, language):
+        self.metadata = {}
         self.project_name = project_name
         self.file = file
         self.language = language
-        return None
 
-
-    def calculate_metdata(self):
+    def calculate_meta_data(self):
         sha512_hash = sha512(self.file.encode()).hexdigest()
         timestamp = time.time()
         extension = self.file.split(".")[1]
@@ -32,8 +31,7 @@ class parser:
             }
         }
         self.metadata = metadata
-        return metadata
-
+        return self.metadata
 
     # Get unsafe functions from a file
     def get_functions(self, verbose):
@@ -50,104 +48,68 @@ class parser:
         extension = metadata[self.project_name]["extension"]
         language = metadata[self.project_name]["language"]
         regex = get_regex(language)
-        catagories = get_language_data(language)
+        categories = get_language_data(language)
         file = self.file
+        line_number = 0
+        lines = read_file_lines(file)
+        data = get_language_data(language)
         # Check if we regex is None == Java
         if regex == "None":
             final_findings = []
             code_snippet = ""
-            line_number = 0
-            lines = read_file_lines(file)
-            data = get_language_data(language)
             for line in lines:
-                line_number = line_number + 1
-                for catagory in data:
-                    for function in data[catagory]:
+                line_number += 1
+                for category in data:
+                    for function in data[category]:
                         if function in line:
-                            metadata[self.project_name]["category"] = catagory
-                            metadata[self.project_name]["function"] = function
-                            if line_number > 3:
-                                code_snippet = lines[line_number - 3]
-                                code_snippet+= lines[line_number - 2]
-                                code_snippet+= lines[line_number - 1]
-                                code_snippet+= lines[line_number]
-                                try:
-                                    code_snippet+= lines[line_number + 1]
-                                except IndexError:
-                                    pass
-                                try:
-                                    code_snippet+= lines[line_number + 2]
-                                except IndexError:
-                                    pass
-                                try:
-                                    code_snippet+= lines[line_number + 3]
-                                except IndexError:
-                                    pass
-                            if line_number < 3:
-                                code_snippet = lines[line_number]
-                            #print(code_snippet)
-                            metadata[self.project_name]["line_number"] = line_number
-                            metadata[self.project_name]["line"] = code_snippet
-                            if verbose:
-                                print_success("Shipping entry")
-                            ship_entry(self.project_name, metadata, verbose)
-
-
+                            self.update_result_data(metadata=metadata,
+                                                    category=category,
+                                                    function=function,
+                                                    line_number=line_number,
+                                                    lines=lines,
+                                                    verbose=verbose)
 
         else:
-            line_number = 0
-            lines = read_file_lines(file)
-            data = get_language_data(language)
-
             for line in lines:
-                line_number = line_number + 1
-                for catagory in data:
-                    for function in data[catagory]:
+                line_number += 1
+                for category in data:
+                    for function in data[category]:
                         new_regex = regex.format(function)
                         results = re.findall(new_regex, line)
                         if results:
-                            metadata[self.project_name]["category"] = catagory
-                            metadata[self.project_name]["function"] = function
-                            if line_number > 3:
-                                code_snippet = lines[line_number - 3]
-                                code_snippet+= lines[line_number - 2]
-                                code_snippet+= lines[line_number - 1]
-                                code_snippet+= lines[line_number]
-                                try:
-                                    code_snippet+= lines[line_number + 1]
-                                except IndexError:
-                                    pass
-                                try:
-                                    code_snippet+= lines[line_number + 2]
-                                except IndexError:
-                                    pass
-                                try:
-                                    code_snippet+= lines[line_number + 3]
-                                except IndexError:
-                                    pass
-                            else:
-                                code_snippet = lines[line_number]
+                            self.update_result_data(metadata=metadata,
+                                                    category=category,
+                                                    function=function,
+                                                    line_number=line_number,
+                                                    lines=lines,
+                                                    verbose=verbose)
 
-                            #print(code_snippet)
-                            metadata[self.project_name]["line_number"] = line_number
-                            metadata[self.project_name]["line"] = code_snippet
-                            if verbose:
-                                print_success("Shipping entry")
-                            ship_entry(self.project_name, metadata, verbose)
+    def update_result_data(self, metadata, category, function, line_number: int, lines, verbose):
+        metadata[self.project_name]["category"] = category
+        metadata[self.project_name]["function"] = function
+        if line_number > 3:
+            code_snippet = lines[line_number - 3]
+            code_snippet += lines[line_number - 2]
+            code_snippet += lines[line_number - 1]
+            code_snippet += lines[line_number]
+            try:
+                code_snippet += lines[line_number + 1]
+            except IndexError:
+                pass
+            try:
+                code_snippet += lines[line_number + 2]
+            except IndexError:
+                pass
+            try:
+                code_snippet += lines[line_number + 3]
+            except IndexError:
+                pass
+        else:
+            code_snippet = lines[line_number]
 
-
-                            #metadata.clear()
-                            #print([file, function, line_number])
-                            #if [file, function, line_number] in previous_findings:
-                            #    print("duplicate found")
-                            #else:
-                            #    print("original")
-                            #    previous_findings.append([file, function, line_number])
-                                # Copy the new dictionary by value so we don't copy
-                                # The last element when we finish the loop
-                            #    print(previous_findings)
-                            #    new_meta = copy.deepcopy(metadata)
-                            #    php_final_findings.append(new_meta)
-                            #    print("+" * 20)
-
-            # return(php_final_findings)
+        # print(code_snippet)
+        metadata[self.project_name]["line_number"] = line_number
+        metadata[self.project_name]["line"] = code_snippet
+        if verbose:
+            print_success("Shipping entry")
+        ship_entry(self.project_name, metadata, verbose)

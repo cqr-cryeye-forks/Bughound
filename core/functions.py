@@ -1,39 +1,40 @@
 #!/usr/bin/python
 
-import os
-import sys
 import json
+import os
 import time
-from core.shipper import *
+
 from termcolor import cprint
-from config import data_file
+
+from core.shipper import *
+
 
 def print_error(text):
-    message = "[-] {0}".format(text)
+    message = f"[-] {text}"
     cprint(message, "red")
 
+
 def print_note(text):
-    message = "[!] {0}".format(text)
+    message = f"[!] {text}"
     cprint(message, "yellow")
 
 
 def print_success(text):
-    message = "[+] {0}".format(text)
+    message = f"[+] {text}"
     cprint(message, "green")
 
 
 def check_path(path):
-    if os.path.exists(path) is False:
-        print_error("[-]path not exist")
-        exit()
-    else:
+    if os.path.exists(path) is not False:
         return True
+    print_error("[-]path not exist")
+    exit()
+
 
 def read_file(file_path):
     if check_path(file_path):
-        fi = open(file_path, "r")
-        data = fi.read()
-        fi.close()
+        with open(file_path, "r") as fi:
+            data = fi.read()
         return data
     else:
         print_error("File not exist")
@@ -42,9 +43,8 @@ def read_file(file_path):
 
 def read_file_lines(file_path):
     if check_path(file_path):
-        fi = open(file_path, "r")
-        file_lines = fi.readlines()
-        fi.close()
+        with open(file_path, "r") as fi:
+            file_lines = fi.readlines()
         return file_lines
     else:
         print_error("File not exist")
@@ -66,10 +66,7 @@ def get_language_data(language):
 
 
 def check_extension(extension):
-    if extension[0] == ".":
-        return True
-    else:
-        return False
+    return extension[0] == "."
 
 
 def check_language(language):
@@ -77,30 +74,24 @@ def check_language(language):
     data = fi.read()
     json_data = dict(json.loads(data))
     languages = json_data.keys()
-    if language in languages:
-        return True
-    else:
-        return False
+    return language in languages
 
 
 def check_project(project_name):
     full_url = elastic_host + default_index + "/_search"
     data = {
-          "query": {
+        "query": {
             "term": {
-              "project": {
-                "value": project_name
-              }
+                "project": {
+                    "value": project_name
+                }
             }
-          }
-      }
+        }
+    }
     req = requests.get(full_url, json=data)
     response = req.text
     value = json.loads(response)["hits"]["total"]["value"]
-    if value != 0:
-        return True
-    else:
-        return False
+    return value != 0
 
 
 def clone_repo(repo_url, project_name):
@@ -110,9 +101,7 @@ def clone_repo(repo_url, project_name):
         print("Git is not installed")
         exit()
 
-    if os.path.exists("projects"):
-        pass
-    else:
+    if not os.path.exists("projects"):
         os.mkdir("projects")
     # clone the repo using git
     command = "git clone %s projects/%s" % (repo_url, project_name)
@@ -121,11 +110,7 @@ def clone_repo(repo_url, project_name):
     print_success("Cloning Done!")
 
 
-def banner():
-    Yellow = '\33[33m'
-    ENDC = '\033[0m'
-    CRED = '\033[91m'
-    OKGREEN = '\033[92m'
+def print_banner():
     banner = r'''{0}
 .______    __    __    _______  __    __    ______    __    __  .__   __.  _______
 |   _  \  |  |  |  |  /  _____||  |  |  |  /  __  \  |  |  |  | |  \ |  | |       \
@@ -144,11 +129,12 @@ def banner():
       /   XXX   \
            V{1}                  {3}V1.0 Beta{1}
     '''
-    print(banner.format(Yellow, ENDC, CRED, OKGREEN))
+    print(banner.format(Colors.YELLOW, Colors.END_COLOR, Colors.RED, Colors.GREEN))
 
 
-def help():
-    print_success("Example: ./bughound3.py --path vulnerable_code/ --language php --extension .php --name testproject\n")
+def print_help_message():
+    print_success(
+        "Example: ./bughound3.py --path vulnerable_code/ --language php --extension .php --name test_project\n")
 
 
 def print_url(project, start_time, total):
@@ -157,7 +143,10 @@ def print_url(project, start_time, total):
     total_time = str(end_time - start_time)[0:5]
     print_note("Total scan time is: %s seconds" % total_time)
     print_note("Total issues found : %s" % total)
-    link = "http://localhost:5601/app/dashboards#/view/f2a02140-3b38-11eb-9206-9dc3fa02fbe6?_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-15m,to:now))&_a=(description:'',filters:!(),fullScreenMode:!f,options:(hidePanelTitles:!f,useMargins:!t),query:(language:kuery,query:'project:%22{0}%22'),timeRestore:!f,title:'Bughound%20Main%20Dashboard',viewMode:view)".format(project)
+    link = "http://localhost:5601/app/dashboards#/view/f2a02140-3b38-11eb-9206-9dc3fa02fbe6?_g=(filters:!()," \
+           "refreshInterval:(pause:!t,value:0),time:(from:now-15m,to:now))&_a=(description:'',filters:!()," \
+           "fullScreenMode:!f,options:(hidePanelTitles:!f,useMargins:!t),query:(language:kuery,query:'project:%22" \
+           f"{project}%22'),timeRestore:!f,title:'Bughound%20Main%20Dashboard',viewMode:view)"
     print_success("You can access the project name using this link:")
     print(link)
 
@@ -167,8 +156,8 @@ def get_files(path, extension):
     if check_path(path):
         print_success("Scanning started!")
         for root, dirs, files in os.walk(path, topdown=False):
-                for fi in files:
-                    dfile = os.path.join(root, fi)
-                    if dfile.endswith(extension):
-                        files_list.append(dfile)
+            for item in files:
+                path_to_file = os.path.join(root, item)
+                if path_to_file.endswith(extension):
+                    files_list.append(path_to_file)
     return files_list

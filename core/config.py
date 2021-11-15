@@ -11,3 +11,10 @@ kibana_host = "http://localhost:5601/"
 default_index = "findings"
 
 data_file = PROJECT_DIR.joinpath("data", "data.json").absolute()
+
+
+class Colors:
+    YELLOW = '\33[33m'
+    END_COLOR = '\033[0m'
+    RED = '\033[91m'
+    GREEN = '\033[92m'
