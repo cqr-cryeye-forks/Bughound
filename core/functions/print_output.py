@@ -1,4 +1,5 @@
 import time
+from pprint import pprint
 
 from termcolor import cprint
 
@@ -40,6 +41,7 @@ def print_banner():
            V{1}                  {3}V1.0 Beta{1}
     '''
     print(banner.format(Colors.YELLOW, Colors.END_COLOR, Colors.RED, Colors.GREEN))
+    print_help_message()
 
 
 def print_help_message():
@@ -59,3 +61,7 @@ def print_url(project, start_time, total):
            f"{project}%22'),timeRestore:!f,title:'Bughound%20Main%20Dashboard',viewMode:view)"
     print_success("You can access the project name using this link:")
     print(link)
+
+
+def print_results(project_name: str, metadata: dict) -> None:
+    pprint(metadata)

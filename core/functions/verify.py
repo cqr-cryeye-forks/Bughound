@@ -3,7 +3,7 @@ import os
 
 import requests
 
-from core.config import data_file, elastic_host, default_index
+from core.config import elastic_host, default_index
 from core.functions.print_output import print_error
 
 
@@ -12,18 +12,6 @@ def check_path(path):
         return True
     print_error("[-]path not exist")
     exit()
-
-
-def check_extension(extension):
-    return extension[0] == "."
-
-
-def check_language(language):
-    fi = open(data_file, "r")
-    data = fi.read()
-    json_data = dict(json.loads(data))
-    languages = json_data.keys()
-    return language in languages
 
 
 def check_project(project_name):

@@ -4,22 +4,23 @@ import time
 
 from core import arguments
 from core.functions.data_processing import clone_repo, get_files
-from core.functions.verify import check_extension, check_language, check_project
+from core.functions.analyze_input import get_extension, check_language
+from core.functions.verify import check_project
 from core.functions.print_output import print_banner, print_help_message, print_url, print_error, print_success
 from core.parser import Parser
 from core.shipper import verify_connection, check_index, create_index, create_index_pattern, fix_disk_read_only, \
     get_total_findings
 
 print_banner()
-print_help_message()
 
 
 local_path = arguments.path
 git_repo = arguments.git
-language = arguments.language
-extension = arguments.extension
+language = arguments.language.lower()
+extension = get_extension()
 project_name = arguments.name
 verbose = arguments.verbose
+use_elastic = arguments.use_elastic
 
 start_time = time.time()
 
@@ -27,31 +28,29 @@ if not check_language(language):
     print_error("Language %s not supported!" % language)
     exit()
 
-if not check_extension(extension):
-    print_error("Extension should start with .")
-    print_error("Example : .java, .php")
-    exit()
-
 # Check connection to Elastic
-if verify_connection():
-    # Check if index existed
-    if not check_index():
-        create_index()
-        create_index_pattern()
-        print_success("Setup ELK stack configuration for you ..")
-        # import_dashboards()
-    else:
-        # Check if the project name is already used
-        if check_project(project_name):
-            print_error("Project name %s already used" % project_name)
-            print_error("Please change it")
-            exit()
+if use_elastic:
+    if not arguments.name:
+        print_error("please use -n/--name argument to specify Elasticsearch project name!")
+        exit()
+    if verify_connection():
+        # Check if index existed
+        if not check_index():
+            create_index()
+            create_index_pattern()
+            print_success("Setup ELK stack configuration for you ..")
+            # import_dashboards()
+        else:
+            # Check if the project name is already used
+            if check_project(project_name):
+                print_error(f"Project name {project_name} already used.\nPlease change it")
+                exit()
 
-        fix_disk_read_only()
-        print_success("ELK is already configured!")
-else:
-    print_error("please check connection to Elasticsearch")
-    exit()
+            fix_disk_read_only()
+            print_success("ELK is already configured!")
+    else:
+        print_error("please check connection to Elasticsearch")
+        exit()
 
 if git_repo is None and local_path:
     files = get_files(local_path, extension)
