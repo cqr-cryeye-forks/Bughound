@@ -38,10 +38,10 @@ def print_banner():
        __XXXXX__
       /__XXXXX__\
       /   XXX   \
-           V{1}                  {3}V1.0 Beta{1}
+           V{1}                  {3}V1.1 By Zeinlol Beta{1}
     '''
     print(banner.format(Colors.YELLOW, Colors.END_COLOR, Colors.RED, Colors.GREEN))
-    print_help_message()
+    # print_help_message()
 
 
 def print_help_message():
@@ -49,12 +49,7 @@ def print_help_message():
         "Example: ./bughound3.py --path vulnerable_code/ --language php --extension .php --name test_project\n")
 
 
-def print_url(project, start_time, total):
-    print_note("Scanning done!")
-    end_time = time.time()
-    total_time = str(end_time - start_time)[0:5]
-    print_note("Total scan time is: %s seconds" % total_time)
-    print_note("Total issues found : %s" % total)
+def print_url(project):
     link = "http://localhost:5601/app/dashboards#/view/f2a02140-3b38-11eb-9206-9dc3fa02fbe6?_g=(filters:!()," \
            "refreshInterval:(pause:!t,value:0),time:(from:now-15m,to:now))&_a=(description:'',filters:!()," \
            "fullScreenMode:!f,options:(hidePanelTitles:!f,useMargins:!t),query:(language:kuery,query:'project:%22" \

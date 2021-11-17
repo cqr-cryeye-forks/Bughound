@@ -11,10 +11,10 @@ def check_extension(extension: str):
 
 def get_lang_extension():
     if arguments.language == 'php':
-        print_note('Use default extension for php: .php')
+        print_note('Used default extension for php: .php')
         return '.php'
     elif arguments.language == 'java':
-        print_note('Use default extension for java: .java')
+        print_note('Used default extension for java: .java')
         return '.java'
     else:
         print_error("Unknown extension! PHP and Java are supported")
