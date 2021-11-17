@@ -6,10 +6,11 @@ from hashlib import sha512
 
 from core import arguments
 from core.functions.data_processing import get_regex, get_language_data, read_file_lines
-from core.functions.print_output import print_success, print_results
+from core.functions.print_output import print_success
 from core.elastic_api import ship_entry
 
 total_findings = 0
+findings = []
 
 
 class Parser:
@@ -113,21 +114,19 @@ class Parser:
         # print(code_snippet)
         metadata[self.project_name]["line_number"] = line_number
         metadata[self.project_name]["line"] = code_snippet
-        increase_findings()
         if verbose:
             print_success("Shipping entry")
         # print(metadata)
         if arguments.use_elastic:
             ship_entry(self.project_name, metadata, verbose)
-        else:
-            print_results(self.project_name, metadata)
+        upend_findings(metadata)
 
 
 def get_total_findings():
-    global total_findings
-    return total_findings
+    global findings
+    return findings
 
 
-def increase_findings():
-    global total_findings
-    total_findings += 1
+def upend_findings(problem: dict):
+    global findings
+    findings.append(problem)

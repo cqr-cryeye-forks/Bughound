@@ -55,7 +55,10 @@ def print_url(project):
     print(link)
 
 
-def print_results(project_name: str, results: dict) -> None:
-    results: list[dict] = list(results.items())[0][1]
-    # for item in results:
-    print(f"{results=}")
+def print_results(results: list[dict]) -> None:
+    for result in results:
+        finding = list(result.items())[0][1]  # [[project_name],[finding]]
+        for key, value in finding.items():
+            print(f"{key}: {value}")
+
+        print('-'*100)

@@ -6,7 +6,7 @@ from core import arguments
 from core.elastic_api import check_elastic_connection
 from core.functions.analyze_input import get_extension, check_language
 from core.functions.data_processing import get_files_for_analyze
-from core.functions.print_output import print_banner, print_url, print_error, print_note
+from core.functions.print_output import print_banner, print_url, print_error, print_note, print_results
 from core.parser import Parser, get_total_findings
 
 local_path = arguments.path
@@ -47,7 +47,8 @@ def main():
         file_metadata = parser.calculate_meta_data()
         functions = parser.get_functions(verbose)
 
-    total_findings_to_print = get_total_findings()
+    findings = get_total_findings()
+    print_results(findings)
 
     if arguments.use_elastic:
         print_url(project_name)
@@ -55,7 +56,7 @@ def main():
     end_time = datetime.now()
     print_note(f"Scanning finished at {end_time}!")
     total_time = str(end_time - start_time)
-    print_note(f"Total scan time is: {total_time} seconds.\nTotal issues found : {total_findings_to_print}")
+    print_note(f"Total scan time is: {total_time} seconds.\nTotal issues found : {len(findings)}")
 
 
 if __name__ == '__main__':
