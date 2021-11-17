@@ -56,9 +56,29 @@ def print_url(project):
 
 
 def print_results(results: list[dict]) -> None:
+    # cprint("grey", "grey")
+    # cprint("red", "red")
+    # cprint("green", "green")
+    # cprint("yellow", "yellow")
+    # cprint("blue", "blue")
+    # cprint("magenta", "magenta")
+    # cprint("cyan", "cyan")
+    # cprint("white", "white")
+
+    def process_code(code: str):
+        lines = code.split('\n')
+        lines_to_color = len(lines) / 2
+
+        print(lines_to_color)
+        return code
+
     for result in results:
         finding = list(result.items())[0][1]  # [[project_name],[finding]]
-        for key, value in finding.items():
-            print(f"{key}: {value}")
-
+        problem_text = f"Found {Colors.RED}{finding['category']}{Colors.END_COLOR}\n" \
+                       f"File: {finding['filename']}\n" \
+                       f"Line: {finding['line_number']}\n" \
+                       f"Code: {process_code(finding['line'])}"
+        # for key, value in finding.items():
+        #     print(f"{key}: {value}")
+        print(problem_text)
         print('-'*100)
