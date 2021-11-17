@@ -1,0 +1,61 @@
+import time
+
+from termcolor import cprint
+
+from core.config import Colors
+
+
+def print_error(text):
+    message = f"[-] {text}"
+    cprint(message, "red")
+
+
+def print_note(text):
+    message = f"[!] {text}"
+    cprint(message, "yellow")
+
+
+def print_success(text):
+    message = f"[+] {text}"
+    cprint(message, "green")
+
+
+def print_banner():
+    banner = r'''{0}
+.______    __    __    _______  __    __    ______    __    __  .__   __.  _______
+|   _  \  |  |  |  |  /  _____||  |  |  |  /  __  \  |  |  |  | |  \ |  | |       \
+|  |_)  | |  |  |  | |  |  __  |  |__|  | |  |  |  | |  |  |  | |   \|  | |  .--.  |
+|   _  <  |  |  |  | |  | |_ | |   __   | |  |  |  | |  |  |  | |  . `  | |  |  |  |
+|  |_)  | |  `--'  | |  |__| | |  |  |  | |  `--'  | |  `--'  | |  |\   | |  '--'  |
+|______/   \______/   \______| |__|  |__|  \______/   \______/  |__| \__| |_______/
+
+ {1}
+
+          {2}\ /
+          oVo
+      \___XXX___/
+       __XXXXX__
+      /__XXXXX__\
+      /   XXX   \
+           V{1}                  {3}V1.0 Beta{1}
+    '''
+    print(banner.format(Colors.YELLOW, Colors.END_COLOR, Colors.RED, Colors.GREEN))
+
+
+def print_help_message():
+    print_success(
+        "Example: ./bughound3.py --path vulnerable_code/ --language php --extension .php --name test_project\n")
+
+
+def print_url(project, start_time, total):
+    print_note("Scanning done!")
+    end_time = time.time()
+    total_time = str(end_time - start_time)[0:5]
+    print_note("Total scan time is: %s seconds" % total_time)
+    print_note("Total issues found : %s" % total)
+    link = "http://localhost:5601/app/dashboards#/view/f2a02140-3b38-11eb-9206-9dc3fa02fbe6?_g=(filters:!()," \
+           "refreshInterval:(pause:!t,value:0),time:(from:now-15m,to:now))&_a=(description:'',filters:!()," \
+           "fullScreenMode:!f,options:(hidePanelTitles:!f,useMargins:!t),query:(language:kuery,query:'project:%22" \
+           f"{project}%22'),timeRestore:!f,title:'Bughound%20Main%20Dashboard',viewMode:view)"
+    print_success("You can access the project name using this link:")
+    print(link)

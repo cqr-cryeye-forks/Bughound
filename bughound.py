@@ -3,8 +3,9 @@
 import time
 
 from core import arguments
-from core.functions import print_banner, print_help_message, check_language, print_error, check_extension, \
-    print_success, check_project, get_files, print_url, clone_repo
+from core.functions.data_processing import clone_repo, get_files
+from core.functions.verify import check_extension, check_language, check_project
+from core.functions.print_output import print_banner, print_help_message, print_url, print_error, print_success
 from core.parser import Parser
 from core.shipper import verify_connection, check_index, create_index, create_index_pattern, fix_disk_read_only, \
     get_total_findings
@@ -32,25 +33,25 @@ if not check_extension(extension):
     exit()
 
 # Check connection to Elastic
-if verify_connection():
-    # Check if index existed
-    if not check_index():
-        create_index()
-        create_index_pattern()
-        print_success("Setup ELK stack configuration for you ..")
-        # import_dashboards()
-    else:
-        # Check if the project name is already used
-        if check_project(project_name):
-            print_error("Project name %s already used" % project_name)
-            print_error("Please change it")
-            exit()
-
-        fix_disk_read_only()
-        print_success("ELK is already configured!")
-else:
-    print_error("please check connection to Elasticsearch")
-    exit()
+# if verify_connection():
+#     # Check if index existed
+#     if not check_index():
+#         create_index()
+#         create_index_pattern()
+#         print_success("Setup ELK stack configuration for you ..")
+#         # import_dashboards()
+#     else:
+#         # Check if the project name is already used
+#         if check_project(project_name):
+#             print_error("Project name %s already used" % project_name)
+#             print_error("Please change it")
+#             exit()
+#
+#         fix_disk_read_only()
+#         print_success("ELK is already configured!")
+# else:
+#     print_error("please check connection to Elasticsearch")
+#     exit()
 
 if git_repo is None and local_path:
     files = get_files(local_path, extension)

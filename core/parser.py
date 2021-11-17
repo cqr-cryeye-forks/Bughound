@@ -4,7 +4,8 @@ import re
 import time
 from hashlib import sha512
 
-from core.functions import get_regex, get_language_data, read_file_lines, print_success
+from core.functions.data_processing import get_regex, get_language_data, read_file_lines
+from core.functions.print_output import print_success
 from core.shipper import ship_entry
 
 php_final_findings = []
@@ -114,4 +115,5 @@ class Parser:
         metadata[self.project_name]["line"] = code_snippet
         if verbose:
             print_success("Shipping entry")
+        # print(metadata)
         ship_entry(self.project_name, metadata, verbose)
