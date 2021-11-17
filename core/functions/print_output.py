@@ -1,6 +1,3 @@
-import time
-from pprint import pprint
-
 from termcolor import cprint
 
 from core.config import Colors
@@ -58,5 +55,7 @@ def print_url(project):
     print(link)
 
 
-def print_results(project_name: str, metadata: dict) -> None:
-    pprint(metadata)
+def print_results(project_name: str, results: dict) -> None:
+    results: list[dict] = list(results.items())[0][1]
+    # for item in results:
+    print(f"{results=}")

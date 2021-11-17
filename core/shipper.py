@@ -12,8 +12,6 @@ from core.config import *
 
 # Ship the findings
 
-total_findings = 0
-
 
 def verify_connection():
     # Check connection to elastic search
@@ -95,37 +93,3 @@ def create_index_pattern():
     request = requests.post(full_index_pattern_url, json=data, headers=headers)
     print(request.text)
 
-
-def ship_entry(project_name, entry, verbose):
-    global total_findings
-    # print(entry)
-    if entry:
-        filename = entry[project_name]["filename"]
-        category = entry[project_name]["category"]
-        function = entry[project_name]["function"]
-        sha512_hash = entry[project_name]["sha512_hash"]
-        timestamp = entry[project_name]["timestamp"]
-        extension = entry[project_name]["extension"]
-        line = entry[project_name]["line"]
-        line_number = entry[project_name]["line_number"]
-
-        data = {
-            "project": project_name,
-            "category": category,
-            "filename": filename,
-            "function": function,
-            "extension": extension,
-            "sha512_hash": sha512_hash,
-            "timestamp": timestamp,
-            "line": line,
-            "line_number": line_number
-        }
-        request_url = elastic_host + "findings" + "/_doc"
-        request = requests.post(request_url, json=data)
-        total_findings = total_findings + 1
-        if verbose:
-            print(request.text)
-
-
-def get_total_findings():
-    return total_findings

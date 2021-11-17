@@ -6,9 +6,8 @@ from core import arguments
 from core.elastic_api import check_elastic_connection
 from core.functions.analyze_input import get_extension, check_language
 from core.functions.data_processing import get_files_for_analyze
-from core.functions.print_output import print_banner, print_url, print_error, print_success, print_note
-from core.parser import Parser
-from core.shipper import get_total_findings
+from core.functions.print_output import print_banner, print_url, print_error, print_note
+from core.parser import Parser, get_total_findings
 
 local_path = arguments.path
 git_repo = arguments.git
@@ -44,21 +43,19 @@ def main():
 
     print_note(f"Scanning started at {start_time}!")
     for file in files:
-        p = Parser(file, project_name, language)
-        file_metadata = p.calculate_meta_data()
-        functions = p.get_functions(verbose)
+        parser = Parser(file, project_name, language)
+        file_metadata = parser.calculate_meta_data()
+        functions = parser.get_functions(verbose)
 
     total_findings_to_print = get_total_findings()
 
     if arguments.use_elastic:
         print_url(project_name)
 
-    print_note("Scanning done!")
     end_time = datetime.now()
     print_note(f"Scanning finished at {end_time}!")
     total_time = str(end_time - start_time)
-    print_note("Total scan time is: %s seconds" % total_time)
-    print_note("Total issues found : %s" % total_findings_to_print)
+    print_note(f"Total scan time is: {total_time} seconds.\nTotal issues found : {total_findings_to_print}")
 
 
 if __name__ == '__main__':

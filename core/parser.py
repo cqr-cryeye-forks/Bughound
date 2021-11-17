@@ -7,10 +7,9 @@ from hashlib import sha512
 from core import arguments
 from core.functions.data_processing import get_regex, get_language_data, read_file_lines
 from core.functions.print_output import print_success, print_results
-from core.shipper import ship_entry
+from core.elastic_api import ship_entry
 
-php_final_findings = []
-previous_findings = []
+total_findings = 0
 
 
 class Parser:
@@ -114,6 +113,7 @@ class Parser:
         # print(code_snippet)
         metadata[self.project_name]["line_number"] = line_number
         metadata[self.project_name]["line"] = code_snippet
+        increase_findings()
         if verbose:
             print_success("Shipping entry")
         # print(metadata)
@@ -121,3 +121,13 @@ class Parser:
             ship_entry(self.project_name, metadata, verbose)
         else:
             print_results(self.project_name, metadata)
+
+
+def get_total_findings():
+    global total_findings
+    return total_findings
+
+
+def increase_findings():
+    global total_findings
+    total_findings += 1
