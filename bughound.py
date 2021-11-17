@@ -33,25 +33,25 @@ if not check_extension(extension):
     exit()
 
 # Check connection to Elastic
-# if verify_connection():
-#     # Check if index existed
-#     if not check_index():
-#         create_index()
-#         create_index_pattern()
-#         print_success("Setup ELK stack configuration for you ..")
-#         # import_dashboards()
-#     else:
-#         # Check if the project name is already used
-#         if check_project(project_name):
-#             print_error("Project name %s already used" % project_name)
-#             print_error("Please change it")
-#             exit()
-#
-#         fix_disk_read_only()
-#         print_success("ELK is already configured!")
-# else:
-#     print_error("please check connection to Elasticsearch")
-#     exit()
+if verify_connection():
+    # Check if index existed
+    if not check_index():
+        create_index()
+        create_index_pattern()
+        print_success("Setup ELK stack configuration for you ..")
+        # import_dashboards()
+    else:
+        # Check if the project name is already used
+        if check_project(project_name):
+            print_error("Project name %s already used" % project_name)
+            print_error("Please change it")
+            exit()
+
+        fix_disk_read_only()
+        print_success("ELK is already configured!")
+else:
+    print_error("please check connection to Elasticsearch")
+    exit()
 
 if git_repo is None and local_path:
     files = get_files(local_path, extension)
