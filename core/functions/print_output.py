@@ -55,26 +55,8 @@ def print_url(project):
     print(link)
 
 
-def print_results(results: list[dict]) -> None:
-
-    def process_code(code: str):
-        lines = code.split('\n')
-        middle_of_lines = float(len(lines)) / 2
-        if middle_of_lines % 2 != 0:
-            lines_to_color = [lines[int(middle_of_lines - .5)]]
-        else:
-            lines_to_color = [lines[int(middle_of_lines)], lines[int(middle_of_lines-1)]]
-        output_lines = [f'{Colors.RED}{line}{Colors.END_COLOR}' if line in lines_to_color else line for line in lines]
-        return '\n'.join(output_lines)
-
-    for result in results:
-        finding = list(result.items())[0][1]  # [[project_name],[finding]]
-        problem_text = f"Found {Colors.YELLOW}{finding['category']}{Colors.END_COLOR}\n" \
-                       f"File: {finding['filename']}\n" \
-                       f"Line: {finding['line_number']}\n" \
-                       f"Code:\n{process_code(finding['line'])}"
-        print(problem_text)
-        print('-'*100)
+def print_results(results: str) -> None:
+    print(results)
 
 
 def print_results_as_json(results: str) -> None:

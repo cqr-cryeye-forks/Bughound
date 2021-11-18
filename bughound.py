@@ -5,7 +5,8 @@ from datetime import datetime
 from core import arguments
 from core.elastic_api import check_elastic_connection
 from core.functions.analyze_input import get_extension, check_language
-from core.functions.data_processing import get_files_for_analyze, convert_findings_to_json
+from core.functions.data_processing import get_files_for_analyze, convert_findings_to_json, write_findings_to_file, \
+    convert_findings_to_str
 from core.functions.print_output import print_banner, print_url, print_error, print_note, print_results, \
     print_results_as_json
 from core.parser import Parser, get_total_findings
@@ -49,11 +50,20 @@ def main():
         functions = parser.get_functions(verbose)
 
     findings = get_total_findings()
+    findings_length = len(findings)
+
     if arguments.json:
         findings = convert_findings_to_json(findings)
-        print_results_as_json(findings)
+        if arguments.output:
+            write_findings_to_file(findings=findings, file=arguments.output)
+        else:
+            print_results_as_json(findings)
     else:
-        print_results(findings)
+        findings = convert_findings_to_str(findings)
+        if arguments.output:
+            write_findings_to_file(findings=findings, file=arguments.output)
+        else:
+            print_results(findings)
 
     if arguments.use_elastic:
         print_url(project_name)
@@ -61,7 +71,7 @@ def main():
     end_time = datetime.now()
     print_note(f"Scanning finished at {end_time}!")
     total_time = str(end_time - start_time)
-    print_note(f"Total scan time is: {total_time} seconds.\nTotal issues found : {len(findings)}")
+    print_note(f"Total scan time is: {total_time} seconds.\nTotal issues found : {findings_length}")
 
 
 if __name__ == '__main__':
