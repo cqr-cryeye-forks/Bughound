@@ -10,6 +10,8 @@ Bughound is an open-source static code analysis tool that analyzes your code and
 
 Bughound has its own Elasticsearch and Kibana Docker image that is preconfigured with dashboards to give you a strong visualization for the findings.
 
+Also you can use docker compose file for running Elasticsearch and Kibana in Your machine without Dockerising this tool
+
 You can detect various types of vulnerabilities such as:
 * Command Injection.
 * XXE.
