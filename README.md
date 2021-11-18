@@ -68,38 +68,6 @@ And after installing the requirements in the previous step you can run Bughound 
 
 `./bughound.py`
 
-You will get the main screen of Bughound.
-
-```
-┌─[askar@hackbook]─[/opt/bughound]
-└──╼ $./bughound.py
-
-.______    __    __    _______  __    __    ______    __    __  .__   __.  _______
-|   _  \  |  |  |  |  /  _____||  |  |  |  /  __  \  |  |  |  | |  \ |  | |       \
-|  |_)  | |  |  |  | |  |  __  |  |__|  | |  |  |  | |  |  |  | |   \|  | |  .--.  |
-|   _  <  |  |  |  | |  | |_ | |   __   | |  |  |  | |  |  |  | |  . `  | |  |  |  |
-|  |_)  | |  `--'  | |  |__| | |  |  |  | |  `--'  | |  `--'  | |  |\   | |  '--'  |
-|______/   \______/   \______| |__|  |__|  \______/   \______/  |__| \__| |_______/
-
-
-
-          \ /
-          oVo
-      \___XXX___/
-       __XXXXX__
-      /__XXXXX__\
-      /   XXX   \
-           V                  V1.0 Beta
-
-[+] Example: ./bughound3.py --path vulnerable_code/ --language php --extension .php --name testproject
-
-usage: bughound.py [-h] [--path PATH] [--git GIT] --language LANGUAGE
-                   --extension EXTENSION --name NAME [--verbose [VERBOSE]]
-bughound.py: error: argument --language is required
-┌─[✗]─[askar@hackbook]─[/opt/bughound]
-└──╼ $
-
-```
 
 ### Docker image installation
 
@@ -126,57 +94,70 @@ After getting two things done, you are ready now to use Bughound!
 To start the analysis process for your code, you should use `Bughound.py` file which has some options, to see these options via the help banner, you can use the following command:
 
 ```
-┌─[✗]─[askar@hackbook]─[/opt/bughound]
-└──╼ $./bughound.py -h
+usage: bughound.py [-h] [-p PATH] [-g GIT] [-elk] -l LANGUAGE [-e EXTENSION]
+                   [-n NAME] [-v] [-j] [-o OUTPUT]
 
-.______    __    __    _______  __    __    ______    __    __  .__   __.  _______
-|   _  \  |  |  |  |  /  _____||  |  |  |  /  __  \  |  |  |  | |  \ |  | |       \
-|  |_)  | |  |  |  | |  |  __  |  |__|  | |  |  |  | |  |  |  | |   \|  | |  .--.  |
-|   _  <  |  |  |  | |  | |_ | |   __   | |  |  |  | |  |  |  | |  . `  | |  |  |  |
-|  |_)  | |  `--'  | |  |__| | |  |  |  | |  `--'  | |  `--'  | |  |\   | |  '--'  |
-|______/   \______/   \______| |__|  |__|  \______/   \______/  |__| \__| |_______/
-
-
-
-          \ /
-          oVo
-      \___XXX___/
-       __XXXXX__
-      /__XXXXX__\
-      /   XXX   \
-           V                  V1.0 Beta
-
-[+] Example: ./bughound3.py --path vulnerable_code/ --language php --extension .php --name testproject
-
-usage: bughound.py [-h] [--path PATH] [--git GIT] --language LANGUAGE
-                   --extension EXTENSION --name NAME [--verbose [VERBOSE]]
+Example: ./bughound3.py --path vulnerable_code/ --language php --extension
+.php --name test_project
 
 optional arguments:
   -h, --help            show this help message and exit
-  --path PATH           local path of the source code
-  --git GIT             git repository URL
-  --language LANGUAGE   the used programming language
-  --extension EXTENSION
-                        extension to search for
-  --name NAME           project name to use
-  --verbose [VERBOSE]   show debugging messages
-┌─[askar@hackbook]─[/opt/bughound]
-└──╼ $
+  -p PATH, --path PATH  Local path of the source code
+  -g GIT, --git GIT     GitHub repository URL
+  -elk, --use-elastic   initialize Elastic and Kibanna requirements. -n/--name
+                        argument required
+  -l LANGUAGE, --language LANGUAGE
+                        Used programming language
+  -e EXTENSION, --extension EXTENSION
+                        File extension for analyze. Default for Java - .java
+                        Default fpr PHP - .php
+  -n NAME, --name NAME  Project name to use in Elasticsearch and Kibanna
+  -v, --verbose         show debugging messages
+  -j, --json            Print found data in json format
+  -o OUTPUT, --output OUTPUT
+                        Print found data to file
+```
+
+## Finding Output example
+
+If you don't use Elasticsearch tool will print found data in this way
+
+```
+----------------------------------------------------------------------------------------------------
+Found SQL injection
+File: /home/nikolai/Downloads/targets/targets_backup/DVWA-master/dvwa/includes/DBMS/PGSQL.php
+Line: 93
+Code:
+// Insert data into 'guestbook'
+$insert = "INSERT INTO guestbook (comment, name) VALUES('This is a test comment.','admin')";
+
+if( !pg_query( $insert ) ) {
+	dvwaMessagePush( "Data could not be inserted into 'guestbook' table<br />SQL: " . pg_last_error() );
+	dvwaPageReload();
+}
+
+----------------------------------------------------------------------------------------------------
 ```
 
 ## Scan Local project
 For example, to scan a local php project, you can use the following command:
 
-`./bughound.py --path /opt/dummyproject --language php --extension .php --name dummyproject`
+`./bughound.py --path /opt/dummyproject --language php`
 
-This command will create a new project called "dummyproject" in the Elasticsearch index, and crawl all the local files with the extension ".php" in the local path "/opt/dummyproject" and ship the results to Elasticsearch.
+This command will crawl all the local files with the extension ".php" in the local path "/opt/dummyproject" and prind found data.
 
 ## Scan remote git repository
 Also, you can pull a remote project from git repository using `--git` switch like the following:
 
-`./bughound.py --git https://github.com/DummyCode/DummyProject --language php --extension .php --name dummyproject`
+`./bughound.py --git https://github.com/DummyCode/DummyProject --language php`
 
 Bughound will clone the code for you and save it in `projects` directory, then will scan it.
+
+## Extensions
+You can use argument `-e\--extension` for specifying extension for scan. Like `.git` or `.java`.
+
+## Elasticsearch support
+For using this script with elasticsearch, you need to enable it with argument `-elk/--use-elastic` and choose project name with `-n/--name dummyproject`.
 
 # Preconfigured Dashboards
 
