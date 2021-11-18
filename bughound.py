@@ -5,8 +5,9 @@ from datetime import datetime
 from core import arguments
 from core.elastic_api import check_elastic_connection
 from core.functions.analyze_input import get_extension, check_language
-from core.functions.data_processing import get_files_for_analyze
-from core.functions.print_output import print_banner, print_url, print_error, print_note, print_results
+from core.functions.data_processing import get_files_for_analyze, convert_findings_to_json
+from core.functions.print_output import print_banner, print_url, print_error, print_note, print_results, \
+    print_results_as_json
 from core.parser import Parser, get_total_findings
 
 local_path = arguments.path
@@ -48,7 +49,11 @@ def main():
         functions = parser.get_functions(verbose)
 
     findings = get_total_findings()
-    print_results(findings)
+    if arguments.json:
+        findings = convert_findings_to_json(findings)
+        print_results_as_json(findings)
+    else:
+        print_results(findings)
 
     if arguments.use_elastic:
         print_url(project_name)

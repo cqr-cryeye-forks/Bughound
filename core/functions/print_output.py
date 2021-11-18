@@ -75,3 +75,7 @@ def print_results(results: list[dict]) -> None:
                        f"Code:\n{process_code(finding['line'])}"
         print(problem_text)
         print('-'*100)
+
+
+def print_results_as_json(results: str) -> None:
+    print(results)

@@ -79,3 +79,8 @@ def get_files_for_analyze(extension: str) -> list[str]:
         files = get_files("projects/%s" % arguments.name, extension)
 
     return files
+
+
+def convert_findings_to_json(results: list[dict]) -> str:
+    findings = [list(result.items())[0][1] for result in results]
+    return json.dumps(findings, indent=2)
