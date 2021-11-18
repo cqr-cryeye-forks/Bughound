@@ -159,6 +159,14 @@ You can use argument `-e\--extension` for specifying extension for scan. Like `.
 ## Elasticsearch support
 For using this script with elasticsearch, you need to enable it with argument `-elk/--use-elastic` and choose project name with `-n/--name dummyproject`.
 
+## Json support
+You can use `-j\--json` for converting findings to json
+
+## Output files support
+You can use `-o\--output FILE.extension` for writing found data to file. 
+
+Example: `FILE.txt` or `FILE.json`
+
 # Preconfigured Dashboards
 
 If you decided to use the official Bughound docker image, you will get a couple of ready to use dashboards that will help you to do your analysis.
