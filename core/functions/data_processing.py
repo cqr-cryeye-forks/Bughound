@@ -95,7 +95,7 @@ def convert_findings_to_str(results: list[dict]) -> str:
                        f"File: {finding['filename']}\n" \
                        f"Line: {finding['line_number']}\n" \
                        f"Code:\n{process_code(finding['line'])}" \
-                       '-' * 100
+                       f'{"-"*100}\n'
         findings += problem_text
     return findings
 
