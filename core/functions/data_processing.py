@@ -58,25 +58,4 @@ def get_code_with_dispersion(lines: list, line_number: int) -> str:
             code_snippet = f'{upper_line}{code_snippet}{under_line}'
         except IndexError:
             pass
-        ...
-    # if dispersion > 3:
-    #     dispersion -= 1
-    #     code_snippet = lines[dispersion - 3]
-    #     code_snippet += lines[dispersion - 2]
-    #     code_snippet += lines[dispersion - 1]
-    #     code_snippet += lines[dispersion]
-    #     try:
-    #         code_snippet += lines[dispersion + 1]
-    #     except IndexError:
-    #         pass
-    #     try:
-    #         code_snippet += lines[dispersion + 2]
-    #     except IndexError:
-    #         pass
-    #     try:
-    #         code_snippet += lines[dispersion + 3]
-    #     except IndexError:
-    #         pass
-    # else:
-    #     code_snippet = lines[dispersion-1]
     return code_snippet
