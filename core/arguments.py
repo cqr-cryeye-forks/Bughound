@@ -15,5 +15,8 @@ parser.add_argument("-v", "--verbose", help="show debugging messages", default=F
 parser.add_argument("-j", "--json", help="Print found data in json format", default=False, required=False,
                     action="store_true")
 parser.add_argument("-o", "--output", help="Print found data to file")
+parser.add_argument("-d", "--dispersion", type=int, default=3,
+                    help="Number of lines around vulnerable line. Default is 3")
+
 
 arguments = parser.parse_args()

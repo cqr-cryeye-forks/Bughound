@@ -5,8 +5,8 @@ from datetime import datetime
 from core import arguments
 from core.elastic_api import check_elastic_connection
 from core.functions.analyze_input import get_extension, check_language
-from core.functions.data_processing import get_files_for_analyze, convert_findings_to_json, write_findings_to_file, \
-    convert_findings_to_str
+from core.functions.data_processing import convert_findings_to_json, convert_findings_to_str
+from core.functions.files import get_files_for_analyze, write_findings_to_file
 from core.functions.print_output import print_banner, print_url, print_error, print_note, print_results, \
     print_results_as_json
 from core.parser import Parser, get_total_findings

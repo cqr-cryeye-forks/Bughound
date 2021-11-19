@@ -5,7 +5,8 @@ import time
 from hashlib import sha512
 
 from core import arguments
-from core.functions.data_processing import get_regex, get_language_data, read_file_lines
+from core.functions.data_processing import get_regex, get_language_data, get_code_with_dispersion
+from core.functions.files import read_file_lines
 from core.functions.print_output import print_success
 from core.elastic_api import ship_entry
 
@@ -90,33 +91,12 @@ class Parser:
     def update_result_data(self, metadata, category, function, line_number: int, lines, verbose):
         metadata[self.project_name]["category"] = category
         metadata[self.project_name]["function"] = function
-        if line_number > 3:
-            line_number -= 1
-            code_snippet = lines[line_number - 3]
-            code_snippet += lines[line_number - 2]
-            code_snippet += lines[line_number - 1]
-            code_snippet += lines[line_number]
-            try:
-                code_snippet += lines[line_number + 1]
-            except IndexError:
-                pass
-            try:
-                code_snippet += lines[line_number + 2]
-            except IndexError:
-                pass
-            try:
-                code_snippet += lines[line_number + 3]
-            except IndexError:
-                pass
-        else:
-            code_snippet = lines[line_number]
-
-        # print(code_snippet)
+        code_snippet = get_code_with_dispersion(lines=lines, line_number=line_number)
         metadata[self.project_name]["line_number"] = line_number
         metadata[self.project_name]["line"] = code_snippet
         if verbose:
             print_success("Shipping entry")
-        # print(metadata)
+
         if arguments.use_elastic:
             ship_entry(self.project_name, metadata, verbose)
         upend_findings(metadata)
