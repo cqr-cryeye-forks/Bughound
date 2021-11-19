@@ -50,12 +50,6 @@ def process_code(code: str) -> str:
 def get_code_with_dispersion(lines: list, line_number: int) -> str:
     dispersion = arguments.dispersion
     line_number -= 1  # lines from 0...n  line_number from 1... n+1 -> Index Error
-    code_snippet = lines[line_number]
-    for _ in range(dispersion):
-        try:
-            upper_line = lines[line_number - dispersion]
-            under_line = lines[line_number + dispersion]
-            code_snippet = f'{upper_line}{code_snippet}{under_line}'
-        except IndexError:
-            pass
-    return code_snippet
+    return ''.join(
+        lines[max(line_number - dispersion, 0): line_number + 1 + dispersion]
+    )
