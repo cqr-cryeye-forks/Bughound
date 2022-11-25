@@ -48,7 +48,8 @@ def get_files(path, extension) -> list[str]:
         import zipfile
         with zipfile.ZipFile(path, 'r') as zip_ref:
             extracted_path = path.rsplit('.zip', 1)[0]
-            zip_ref.extractall(path)
+            extract_to = path.rsplit('/', 1)[0]
+            zip_ref.extractall(extract_to)
             print(f'ZIP file {path} was extracted to {extracted_path}')
         path = extracted_path
 
