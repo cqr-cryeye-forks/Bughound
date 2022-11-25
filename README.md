@@ -146,6 +146,7 @@ For example, to scan a local php project, you can use the following command:
 
 `./bughound.py --path /opt/dummyproject --language php`
 
+Tool will automatically extract zip archive if needed
 This command will crawl all the local files with the extension ".php" in the local path "/opt/dummyproject" and prind found data.
 
 ## Scan remote git repository

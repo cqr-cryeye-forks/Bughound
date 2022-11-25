@@ -36,7 +36,7 @@ def clone_repo(repo_url, project_name):
     if not os.path.exists("projects"):
         os.mkdir("projects")
     # clone the repo using git
-    command = "git clone %s projects/%s" % (repo_url, project_name)
+    command = f"git clone {repo_url} projects/{project_name}"
     print_success("Cloning ..")
     os.system(command)
     print_success("Cloning Done!")
@@ -44,6 +44,14 @@ def clone_repo(repo_url, project_name):
 
 def get_files(path, extension) -> list[str]:
     files_list = []
+    if '.zip' in path[-4:]:
+        import zipfile
+        with zipfile.ZipFile(path, 'r') as zip_ref:
+            extracted_path = path.rsplit('.zip', 1)[0]
+            zip_ref.extractall(path)
+            print(f'ZIP file {path} was extracted to {extracted_path}')
+        path = extracted_path
+
     if check_path(path):
         for root, dirs, files in os.walk(path, topdown=False):
             for item in files:
@@ -61,7 +69,7 @@ def get_files_for_analyze(extension: str) -> list[str]:
     if arguments.git:
         # Use git repo
         clone_repo(arguments.git, arguments.name)
-        files = get_files("projects/%s" % arguments.name, extension)
+        files = get_files(f"projects/{arguments.name}", extension)
 
     return files
 

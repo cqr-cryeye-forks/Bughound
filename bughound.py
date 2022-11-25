@@ -26,7 +26,7 @@ def main():
     start_time = datetime.now()
 
     if not check_language(language):
-        print_error("Language %s not supported!" % language)
+        print_error(f"Language {language} not supported!")
         exit()
 
     # Check connection to Elastic
