@@ -26,7 +26,7 @@ def read_file_lines(file_path):
         return False
 
 
-def clone_repo(repo_url, project_name):
+def clone_repo(repo_url, project_name, branch):
     # check if git is installed
     check_git = os.popen("which git").read()
     if check_git == "":
@@ -36,7 +36,10 @@ def clone_repo(repo_url, project_name):
     if not os.path.exists("projects"):
         os.mkdir("projects")
     # clone the repo using git
-    command = f"git clone {repo_url} projects/{project_name}"
+    if branch:
+        command = f"git clone {repo_url} --branch {branch} projects/{project_name}"
+    else:
+        command = f"git clone {repo_url} projects/{project_name}"
     print_success("Cloning ..")
     os.system(command)
     print_success("Cloning Done!")
@@ -69,7 +72,7 @@ def get_files_for_analyze(extension: str) -> list[str]:
 
     if arguments.git:
         # Use git repo
-        clone_repo(arguments.git, arguments.name)
+        clone_repo(arguments.git, arguments.name, arguments.branch)
         files = get_files(f"projects/{arguments.name}", extension)
 
     return files

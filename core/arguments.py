@@ -10,6 +10,7 @@ parser.add_argument("-l", "--language", required=True, help="Used programming la
 parser.add_argument("-e", "--extension",
                     help="File extension for analyze. Default for Java - .java Default fpr PHP - .php")
 parser.add_argument("-n", "--name", help="Project name to use in Elasticsearch and Kibanna")
+parser.add_argument("-b", "--branch", help="Git Branch for scan")
 parser.add_argument("-v", "--verbose", help="show debugging messages", default=False, required=False,
                     action="store_true")
 parser.add_argument("-j", "--json", help="Print found data in json format", default=False, required=False,
